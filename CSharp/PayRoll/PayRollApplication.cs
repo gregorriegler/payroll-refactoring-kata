@@ -5,11 +5,7 @@ public class PayRollApplication
     public PayCheck PayAmount(Employee employee, int workHours)
     {
         PayCheck result;
-        if (employee.IsSeparated())
-        {
-            result = new PayCheck(0, "SEP");
-        }
-        else
+        if (!employee.IsSeparated())
         {
             if (employee.IsRetired())
             {
@@ -24,6 +20,10 @@ public class PayRollApplication
                 var amount = bonus + regularAmount;
                 result = new PayCheck(amount, "EMP");
             }
+        }
+        else
+        {
+            result = new PayCheck(0, "SEP");
         }
 
         return result;
