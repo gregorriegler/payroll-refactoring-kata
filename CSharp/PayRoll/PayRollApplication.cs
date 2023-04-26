@@ -1,8 +1,8 @@
 ﻿namespace PayRoll;
 
-public class PayRollApplication
+public static class PayRollApplication
 {
-    public PayCheck PayAmount(Employee employee, int workHours)
+    public static PayCheck PayAmount(Employee employee, int workHours)
     {
         PayCheck result;
         if (!employee.IsSeparated())
@@ -14,7 +14,6 @@ public class PayRollApplication
             else
             {
                 // logic to compute amount
-                employee.PayCheckGenerated(DateTime.Today);
                 var bonus = ComputeBonus(employee, workHours);
                 var regularAmount = ComputeRegularPayAmount(employee, workHours);
                 var amount = bonus + regularAmount;
@@ -34,53 +33,66 @@ public class PayRollApplication
         return workHours > 40 ? 1000 : 0;
     }
 
-    private static decimal ComputeRegularPayAmount(Employee employee, decimal bonus)
+    private static decimal ComputeRegularPayAmount(Employee employee, decimal workHours)
     {
-        return 500;
+        return employee.Rate * workHours;
     }
 }
 
 public class Employee
 {
-    private int id;
-    private int rate;
-    private bool separated;
-    private bool retired;
-    private DateTime paidAt;
+    public int Rate { get; }
+    private readonly bool _separated;
+    private readonly bool _retired;
 
-    public Employee(int id, int rate, bool separated, bool retired, DateTime paidAt)
+    public Employee(int rate, bool separated, bool retired)
     {
-        this.id = id;
-        this.rate = rate;
-        this.separated = separated;
-        this.retired = retired;
-        this.paidAt = paidAt;
+        Rate = rate;
+        _separated = separated;
+        _retired = retired;
     }
 
     public bool IsSeparated()
     {
-        return separated;
+        return _separated;
     }
 
     public bool IsRetired()
     {
-        return retired;
-    }
-
-    public void PayCheckGenerated(DateTime dateTime)
-    {
-        paidAt = dateTime;
+        return _retired;
     }
 }
 
 public class PayCheck
 {
-    public decimal Amount { get; }
-    public string ReasonCode { get; }
+    private decimal Amount { get; }
+    private string ReasonCode { get; }
 
     public PayCheck(decimal amount, string reasonCode)
     {
         Amount = amount;
         ReasonCode = reasonCode;
+    }
+
+    public override string ToString()
+    {
+        return ReasonCode + " " + Amount;
+    }
+
+    private bool Equals(PayCheck other)
+    {
+        return Amount == other.Amount && ReasonCode == other.ReasonCode;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == GetType() && Equals((PayCheck)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Amount, ReasonCode);
     }
 }
