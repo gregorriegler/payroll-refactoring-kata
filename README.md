@@ -1,6 +1,6 @@
 # PayRoll Refactoring Kata
 
-This is a small code to practice refactoring the bumpy rode code smell.
+This is a small code to practice refactoring the bumpy rode code smell by replacing [nested conditionals with guard clauses](https://refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html).
 
 Originally found here:
 https://toot.legacycode.rocks/@nicoespeon/110226815487285845
